@@ -1,0 +1,31 @@
+# Everything about you that appears in the sidebar and around the site.
+# Replace the [bracketed] placeholders with your own details.
+
+name: António Fernandes
+aliases:
+  - A. Fernandes
+position: "[Your position]"
+affiliation: "[Department, University]"
+location: "[City, Country]"
+# photo: /images/profile.jpg   # put a square photo in public/images/ and uncomment this line
+
+interests:
+  - "[Topic 1]"
+  - "[Topic 2]"
+  - "[Topic 3]"
+  - "[Topic 4]"
+
+# icon can be: email, scholar, github, orcid, linkedin, link
+links:
+  - label: Email
+    url: "mailto:[you@university.edu]"
+    icon: email
+  - label: Google Scholar
+    url: "https://scholar.google.com/"
+    icon: scholar
+  - label: GitHub
+    url: https://github.com/antoniomf97
+    icon: github
+  - label: ORCID
+    url: "https://orcid.org/"
+    icon: orcid

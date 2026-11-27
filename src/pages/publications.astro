@@ -1,0 +1,125 @@
+---
+/* Publications page: everything in src/data/publications.yaml, grouped by year. */
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PublicationItem from '../components/PublicationItem.astro';
+
+const profile = (await getEntry('profile', 'profile'))!.data;
+const highlight = [profile.name, ...profile.aliases];
+const scholar = profile.links.find((link) => link.icon === 'scholar');
+
+const pubs = (await getCollection('publications'))
+  .map((entry) => entry.data)
+  .sort((a, b) => b.year - a.year);
+
+const years = [...new Set(pubs.map((pub) => pub.year))];
+
+// Filter buttons, only for the types you actually have.
+const filterLabels = {
+  journal: 'Journal articles',
+  conference: 'Conference papers',
+  preprint: 'Preprints',
+  thesis: 'Theses',
+  other: 'Other',
+};
+const filters = (Object.keys(filterLabels) as (keyof typeof filterLabels)[]).filter((type) =>
+  pubs.some((pub) => pub.type === type),
+);
+---
+
+<BaseLayout title="Publications">
+  <header class="intro">
+    <h1 class="page-title">Publications</h1>
+    <p class="muted">
+      Most recent first.{' '}
+      {
+        scholar && (
+          <>
+            The full list is also on <a href={scholar.url}>Google Scholar</a>.
+          </>
+        )
+      }
+    </p>
+    {
+      filters.length > 1 && (
+        <div class="filters" role="group" aria-label="Filter by type">
+          <button type="button" class="pill-button" data-filter="all" aria-pressed="true">
+            All
+          </button>
+          {filters.map((type) => (
+            <button type="button" class="pill-button" data-filter={type} aria-pressed="false">
+              {filterLabels[type]}
+            </button>
+          ))}
+        </div>
+      )
+    }
+  </header>
+
+  <div id="pub-list">
+    {
+      years.map((year) => (
+        <section class="year" aria-labelledby={`year-${year}`}>
+          <h2 id={`year-${year}`}>{year}</h2>
+          {pubs
+            .filter((pub) => pub.year === year)
+            .map((pub) => (
+              <PublicationItem pub={pub} highlight={highlight} showType />
+            ))}
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<script>
+  // Show only the chosen type, and hide years left empty.
+  const list = document.getElementById('pub-list')!;
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const filter = button.dataset.filter;
+      // Keep the list as tall as the full list while filtering. Otherwise the page
+      // gets shorter, the browser jumps the scroll position and everything moves.
+      if (filter === 'all') {
+        list.style.minHeight = '';
+      } else if (!list.style.minHeight) {
+        list.style.minHeight = `${list.offsetHeight}px`;
+      }
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+      document.querySelectorAll<HTMLElement>('[data-type]').forEach((pub) => {
+        pub.hidden = filter !== 'all' && pub.dataset.type !== filter;
+      });
+      document.querySelectorAll<HTMLElement>('.year').forEach((year) => {
+        year.hidden = !year.querySelector('[data-type]:not([hidden])');
+      });
+    });
+  });
+</script>
+
+<style>
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 8px;
+  }
+
+  .year + .year {
+    margin-top: 32px;
+  }
+
+  .year h2 {
+    margin-bottom: 4px;
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--color-muted);
+  }
+</style>

@@ -1,0 +1,71 @@
+---
+/* The navigation bar. To add a page: create it in src/pages/ and add it here. */
+const items = [
+  { href: '/', label: 'About' },
+  { href: '/research/', label: 'Research' },
+  { href: '/publications/', label: 'Publications' },
+  { href: '/teaching/', label: 'Teaching' },
+  { href: '/projects/', label: 'Projects' },
+  { href: '/cv/', label: 'CV' },
+];
+
+// "/publications" and "/publications/" are the same page.
+const normalize = (path: string) => (path.length > 1 ? path.replace(/\/$/, '') : path);
+const current = normalize(Astro.url.pathname);
+---
+
+<nav class="panel nav" aria-label="Main">
+  <ul>
+    {
+      items.map((item) => {
+        const active = normalize(item.href) === current;
+        return (
+          <li>
+            <a href={item.href} class:list={['link', { active }]} aria-current={active ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>
+
+<style>
+  .nav {
+    padding: 8px;
+    border-radius: var(--radius-nav);
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .link {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: var(--radius-item);
+    color: var(--color-ink);
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .link:hover {
+    background: var(--color-ground);
+    text-decoration: none;
+  }
+
+  .link.active {
+    background: var(--color-tint);
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+</style>

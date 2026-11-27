@@ -1,0 +1,132 @@
+---
+/* The profile card on the left. Its content comes from src/data/profile.yaml. */
+import { getEntry } from 'astro:content';
+import Icon from './Icon.astro';
+
+const profile = await getEntry('profile', 'profile');
+if (!profile) throw new Error('Missing src/data/profile.yaml');
+const p = profile.data;
+
+const words = p.name.trim().split(/\s+/);
+const initials = (words[0][0] + (words.length > 1 ? words[words.length - 1][0] : '')).toUpperCase();
+---
+
+<aside class="panel sidebar" aria-label="Profile">
+  <div class="inner">
+    {
+      p.photo ? (
+        <img class="photo" src={p.photo} alt={`Photo of ${p.name}`} width="176" height="176" />
+      ) : (
+        <div class="photo initials" aria-hidden="true">
+          {initials}
+        </div>
+      )
+    }
+
+    <div class="identity">
+      <p class="name">{p.name}</p>
+      <p class="role">{p.position}<br />{p.affiliation}</p>
+    </div>
+
+    <ul class="links" aria-label="Contact and profiles">
+      {
+        p.location && (
+          <li class="row static">
+            <Icon name="location" />
+            <span>{p.location}</span>
+          </li>
+        )
+      }
+      {
+        p.links.map((link) => (
+          <li>
+            <a class="row" href={link.url} rel="me">
+              <Icon name={link.icon} />
+              <span>{link.label}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</aside>
+
+<style>
+  .sidebar {
+    flex: 1 1 300px;
+    padding: 36px 28px;
+  }
+
+  /* Keeps your profile in view while long pages scroll. */
+  .inner {
+    position: sticky;
+    top: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+  }
+
+  .photo {
+    width: 176px;
+    height: 176px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .initials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-tint);
+    color: var(--color-accent);
+    font-family: var(--font-heading);
+    font-size: 56px;
+    font-weight: 600;
+  }
+
+  .identity {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+  }
+
+  .name {
+    font-family: var(--font-heading);
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .role {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+
+  .links {
+    width: 100%;
+    margin: 0;
+    padding: 12px 0 0;
+    border-top: 1px solid var(--color-line);
+    list-style: none;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    font-size: 15px;
+    color: var(--color-ink);
+  }
+
+  .row.static {
+    color: var(--color-muted);
+  }
+
+  .row svg {
+    flex: none;
+  }
+</style>

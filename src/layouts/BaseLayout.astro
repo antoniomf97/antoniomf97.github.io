@@ -1,0 +1,121 @@
+---
+/*
+ * The frame every page shares: <head>, profile sidebar, nav bar, content card
+ * and footer. A page only supplies what goes inside the content card.
+ */
+import '@fontsource-variable/inter';
+import '@fontsource-variable/space-grotesk';
+import '../styles/global.css';
+import { getEntry } from 'astro:content';
+import Sidebar from '../components/Sidebar.astro';
+import Nav from '../components/Nav.astro';
+
+interface Props {
+  /** Page name shown in the browser tab, e.g. "Publications". Leave out on the home page. */
+  title?: string;
+  /** Summary shown by search engines and link previews. */
+  description?: string;
+}
+
+const profile = await getEntry('profile', 'profile');
+if (!profile) throw new Error('Missing src/data/profile.yaml');
+const { name, position, affiliation } = profile.data;
+
+const { title, description = `${name}: ${position}, ${affiliation}.` } = Astro.props;
+const pageTitle = title ? `${title} | ${name}` : name;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+const now = new Date();
+const lastUpdated = now.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <div class="page">
+      <div class="shell">
+        <Sidebar />
+        <div class="main-col">
+          <Nav />
+          <main id="content" class="panel content">
+            <slot />
+          </main>
+        </div>
+      </div>
+      <footer class="footer">
+        <span>© {now.getFullYear()} {name}</span>
+        <span>Last updated {lastUpdated}</span>
+      </footer>
+    </div>
+  </body>
+</html>
+
+<style>
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 32px 24px;
+  }
+
+  /* Sidebar on the left, nav + content on the right. */
+  .shell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap);
+  }
+
+  .main-col {
+    flex: 999 1 640px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+  }
+
+  .content {
+    padding: 44px 48px;
+  }
+
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 8px;
+    font-size: 13px;
+    color: var(--color-muted);
+  }
+
+  /* Hidden until a keyboard user presses Tab. */
+  .skip-link {
+    position: absolute;
+    left: 16px;
+    top: -100px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: var(--color-ink);
+    color: var(--color-panel);
+  }
+
+  .skip-link:focus {
+    top: 16px;
+  }
+</style>

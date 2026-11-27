@@ -1,0 +1,159 @@
+/*
+ * Design tokens: the colours, fonts and sizes used across the whole site.
+ * Change a value here and every page follows.
+ */
+:root {
+  /* Colours */
+  --color-ground: #eef0f3; /* page background */
+  --color-panel: #ffffff; /* cards */
+  --color-ink: #15181e; /* main text */
+  --color-muted: #575f6e; /* secondary text */
+  --color-line: #e0e3e9; /* borders and dividers */
+  --color-accent: #2451c7; /* links and highlights */
+  --color-tint: color-mix(in srgb, var(--color-accent) 11%, #ffffff); /* soft accent background */
+
+  /* Fonts */
+  --font-body: 'Inter Variable', system-ui, sans-serif;
+  --font-heading: 'Space Grotesk Variable', 'Inter Variable', system-ui, sans-serif;
+
+  /* Shapes and spacing */
+  --radius-panel: 24px;
+  --radius-nav: 20px;
+  --radius-item: 14px;
+  --radius-pill: 999px;
+  --gap: 20px;
+  --page-max: 1200px;
+}
+
+/* Base */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* Shared building blocks */
+.panel {
+  background: var(--color-panel);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-panel);
+}
+
+.page-title {
+  font-size: 30px;
+}
+
+.section + .section {
+  margin-top: 44px;
+}
+
+.section-title {
+  margin-bottom: 12px;
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+.prose p {
+  max-width: 68ch;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.prose p + p {
+  margin-top: 16px;
+}
+
+.muted {
+  color: var(--color-muted);
+}
+
+.eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-tint);
+  color: var(--color-accent);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.pill-button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-ink);
+  font: 500 14px var(--font-body);
+  cursor: pointer;
+}
+
+.pill-button:hover {
+  border-color: var(--color-accent);
+  text-decoration: none;
+}
+
+.pill-button[aria-pressed='true'] {
+  border-color: transparent;
+  background: var(--color-tint);
+  color: var(--color-accent);
+  font-weight: 600;
+}

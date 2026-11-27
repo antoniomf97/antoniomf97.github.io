@@ -1,0 +1,58 @@
+# Your publications. Add a new paper by copying an entry and editing it.
+# The site groups them by year (newest first) on the Publications page.
+#
+# - title: Paper title
+#   authors: [First Author, António Fernandes, Third Author]
+#   venue: Journal or conference name
+#   year: 2026
+#   type: journal            # journal | conference | preprint | thesis | other
+#   selected: true           # optional: also show it on the home page
+#   teaser: /images/papers/example.png   # optional: figure for the home page
+#   links:                   # all optional
+#     pdf: /files/papers/example.pdf     # files go in public/files/...
+#     bibtex: /files/papers/example.bib
+#     doi: https://doi.org/...
+#     code: https://github.com/...
+#     slides: ...
+#     video: ...
+#     website: ...
+
+- title: "[Paper title]"
+  authors: ["[Co-author]", António Fernandes, "[Co-author]"]
+  venue: "[Journal name]"
+  year: 2026
+  type: journal
+  selected: true
+  links:
+    pdf: "#"
+    bibtex: "#"
+    doi: "#"
+
+- title: "[Paper title]"
+  authors: [António Fernandes, "[Co-author]", "[Co-author]"]
+  venue: "[arXiv / bioRxiv / SSRN]"
+  year: 2026
+  type: preprint
+  links:
+    pdf: "#"
+    code: "#"
+
+- title: "[Paper title]"
+  authors: ["[Co-author]", António Fernandes]
+  venue: "[Conference name], [City]"
+  year: 2025
+  type: conference
+  selected: true
+  links:
+    pdf: "#"
+    bibtex: "#"
+    slides: "#"
+
+- title: "[Paper title]"
+  authors: ["[Co-author]", "[Co-author]", António Fernandes]
+  venue: "[Journal name]"
+  year: 2025
+  type: journal
+  links:
+    pdf: "#"
+    doi: "#"

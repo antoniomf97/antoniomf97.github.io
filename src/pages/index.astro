@@ -1,16 +1,139 @@
 ---
+/* Home page (About). The text below is yours to write; news, interests and
+   selected papers come from the YAML files in src/data/. */
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PublicationItem from '../components/PublicationItem.astro';
+
+const profile = (await getEntry('profile', 'profile'))!.data;
+const highlight = [profile.name, ...profile.aliases];
+
+const news = (await getCollection('news'))
+  .map((entry) => entry.data)
+  .sort((a, b) => b.date.valueOf() - a.date.valueOf())
+  .slice(0, 5);
+
+const selected = (await getCollection('publications'))
+  .map((entry) => entry.data)
+  .filter((pub) => pub.selected)
+  .sort((a, b) => b.year - a.year);
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+  <section class="section">
+    <h1 class="page-title">About</h1>
+    <div class="prose about">
+      <p>
+        [Two or three sentences: your current position, where you work, and the main question your research
+        tries to answer.]
+      </p>
+      <p>
+        [A second short paragraph: your background and methods, who you work with, and what you are open to:
+        collaborations, students, positions.]
+      </p>
+    </div>
+    {
+      profile.interests.length > 0 && (
+        <div class="interests">
+          <span class="eyebrow">Interests</span>
+          {profile.interests.map((interest) => (
+            <span class="chip">{interest}</span>
+          ))}
+        </div>
+      )
+    }
+  </section>
+
+  {
+    news.length > 0 && (
+      <section class="section">
+        <h2 class="section-title">News</h2>
+        <ul class="news">
+          {news.map((item) => (
+            <li>
+              <time datetime={item.date.toISOString().slice(0, 10)}>{formatDate(item.date)}</time>
+              <span>{item.url ? <a href={item.url}>{item.text}</a> : item.text}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    selected.length > 0 && (
+      <section class="section">
+        <div class="section-head">
+          <h2 class="section-title">Selected publications</h2>
+          <a href="/publications/">All publications →</a>
+        </div>
+        {selected.map((pub) => (
+          <PublicationItem pub={pub} highlight={highlight} showTeaser />
+        ))}
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .about {
+    margin-top: 16px;
+  }
+
+  .interests {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .interests .eyebrow {
+    margin-right: 4px;
+  }
+
+  .news {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .news li {
+    display: flex;
+    gap: 20px;
+    padding: 12px 0;
+    border-top: 1px solid var(--color-line);
+    font-size: 15px;
+  }
+
+  .news time {
+    flex: 0 0 96px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .section-head .section-title {
+    margin-bottom: 0;
+  }
+
+  .section-head a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+</style>

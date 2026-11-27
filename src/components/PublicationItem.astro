@@ -1,0 +1,133 @@
+---
+/* One publication: title, authors (your name in bold), venue and link buttons. */
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  pub: CollectionEntry<'publications'>['data'];
+  /** Names to show in bold in the author list. */
+  highlight: string[];
+  /** Show the type label (Journal, Preprint...). Used on the Publications page. */
+  showType?: boolean;
+  /** Show the teaser image, if the paper has one. Used on the home page. */
+  showTeaser?: boolean;
+}
+
+const { pub, highlight, showType = false, showTeaser = false } = Astro.props;
+
+const typeLabels = {
+  journal: 'Journal',
+  conference: 'Conference',
+  preprint: 'Preprint',
+  thesis: 'Thesis',
+  other: 'Other',
+};
+
+const linkLabels = {
+  pdf: 'PDF',
+  bibtex: 'BibTeX',
+  doi: 'DOI',
+  code: 'Code',
+  slides: 'Slides',
+  video: 'Video',
+  website: 'Website',
+};
+
+const links = (Object.keys(linkLabels) as (keyof typeof linkLabels)[])
+  .filter((key) => pub.links[key])
+  .map((key) => ({ label: linkLabels[key], href: pub.links[key]! }));
+
+const teaser = showTeaser ? pub.teaser : undefined;
+---
+
+<article class:list={['pub', { 'with-teaser': teaser }]} data-type={pub.type}>
+  {teaser && <img class="teaser" src={teaser} alt="" loading="lazy" />}
+  <div class="body">
+    {showType && <span class="type">{typeLabels[pub.type]}</span>}
+    <h3 class="title">{pub.title}</h3>
+    <p class="authors">
+      {
+        pub.authors.map((author, i) => (
+          <>
+            {i > 0 && ', '}
+            {highlight.includes(author) ? <strong>{author}</strong> : author}
+          </>
+        ))
+      }
+    </p>
+    <p class="venue"><em>{pub.venue}</em> · {pub.year}</p>
+    {
+      links.length > 0 && (
+        <div class="actions">
+          {links.map((link) => (
+            <a class="pill-button" href={link.href}>
+              {link.label}
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .pub {
+    display: flex;
+    gap: 24px;
+    padding: 20px 0;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .teaser {
+    flex: 0 0 176px;
+    height: 112px;
+    border-radius: var(--radius-item);
+    object-fit: cover;
+    background: var(--color-tint);
+  }
+
+  .body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .type {
+    margin-bottom: 4px;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--color-tint);
+    color: var(--color-accent);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .title {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.45;
+  }
+
+  .authors,
+  .venue {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+
+  .authors strong {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+</style>

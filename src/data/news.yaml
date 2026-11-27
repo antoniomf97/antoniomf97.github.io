@@ -1,0 +1,13 @@
+# News items for the home page. Newest first is easiest to read, but the site
+# sorts by date anyway and shows the latest 5.
+#
+# - date: 2026-11-15          # YYYY-MM-DD
+#   text: Short sentence about what happened.
+#   url: https://...          # optional: makes the text a link
+
+- date: 2026-11-01
+  text: "[Paper accepted at Venue]"
+- date: 2026-09-01
+  text: "[Gave a talk at Event]"
+- date: 2026-03-01
+  text: "[Started a new position at Institution]"
