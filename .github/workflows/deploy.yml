@@ -1,0 +1,35 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Build and deploy every time you push to master (your default branch)
+  push:
+    branches: [ master ]
+  # Lets you re-run a deploy by hand from the Actions tab on GitHub
+  workflow_dispatch:
+
+# Allow this workflow to read the repo and publish to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repository using git
+        uses: actions/checkout@v7
+      - name: Install, build, and upload your site
+        uses: withastro/action@v6
+        # Uses Node 24 and detects npm from package-lock.json by default
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
